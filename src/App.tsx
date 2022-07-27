@@ -1,21 +1,21 @@
 import { useState } from "react";
+import { resourceLimits } from "worker_threads";
 
-interface Joke {
-  id: number;
-  type: string;
-  setup: string;
-  punchline: string;
+interface Dog {
+  message: string;
+  status: string;
 }
 
 function App() {
-  const [joke, setJoke] = useState<Joke>();
+  const [dog, setDog] = useState<Dog[]>([]);
 
-  const handleGetJoke = async () => {
+  const handleGetDog = async () => {
     const response = await fetch(
-      "https://jokestemp.neillbogie.repl.co/jokes/general/random"
+      "https://dog.ceo/api/breeds/image/random"
     );
-    const jsonBody: Joke[] = await response.json();
-    setJoke(jsonBody[0]);
+    const jsonBody: Dog = await response.json();
+    setDog([...dog,jsonBody]);
+    console.log("")
   };
 
   // const handleGetJoke = () => {
@@ -23,28 +23,37 @@ function App() {
   //     .then((response) => response.json())
   //     .then((jsonBody: Joke[]) => setJoke(jsonBody[0]));
   // };
+    const callBackFunc=(dog:Dog[]): JSX.Element[]=>{
+      let result= dog.map(a=>{return(<img src={a.message} alt="random dog" width={500} height={600}/>)});
+      console.log("is it working")
+      return result
+    }
+    
 
-  if (joke) {
+      //let result = objArray.map(a => a.foo);
+    
+  if (dog) {
     return (
       <div>
-        <h1>Joke app</h1>
-        <details>
-          <summary>{joke.setup}</summary>
-          <p>{joke.punchline}</p>
-        </details>
+        <h1>Dog app</h1>
+        <div>
+          <ul>
+            {callBackFunc(dog)}
+          </ul>
+        </div>
         <hr />
-        <button onClick={handleGetJoke}>Get another joke</button>
+        <button onClick={handleGetDog}>Get another dog</button>
       </div>
     );
   } else {
     return (
       <div>
-        <h1>Joke app</h1>
+        <h1>Dog app</h1>
         <p>
           Click the button to trigger a <code>fetch</code> that gets a random
-          joke from an API!
+          dog image from an API!
         </p>
-        <button onClick={handleGetJoke}>Get joke</button>
+        <button onClick={handleGetDog}>Get dog</button>
       </div>
     );
   }
